@@ -12,10 +12,13 @@ const adRoutes = require("./routes/adRoute");
 
 const app = express();
 
-app.use(cors({
-  origin: ["http://localhost:5173"], 
-  credentials: true
-}));
+// app.use(cors({
+//   origin: ["http://localhost:5173"], 
+//   credentials: true
+// }));
+
+app.use(cors({ credentials: true, origin: true }));
+
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
