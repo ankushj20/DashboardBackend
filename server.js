@@ -43,6 +43,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/ads", adRoutes);
 
+app.get("/", (req, res) => {
+  res.send("API is Running...");
+})
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
