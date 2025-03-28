@@ -13,7 +13,7 @@ const adRoutes = require("./routes/adRoute");
 const app = express();
 
 app.use(cors({
-  origin: ["http://localhost:5173"], 
+  origin: ["https://dfrontend-7gtw.onrender.com"], 
   credentials: true
 }));
 
