@@ -74,27 +74,75 @@ const deletePost = async (req, res) => {
 };
 
 // Update a post
-const updatePost = async (req, res) => {
-  console.log("Update Request Received for ID:", req.params.id);
-  console.log("Request Body:", req.body);
+// const updatePost = async (req, res) => {
+//   console.log("Update Request Received for ID:", req.params.id);
+//   console.log("Request Body:", req.body);
   
+//   try {
+//       const post = await News.findById(req.params.id);
+//       if (!post) {
+//           return res.status(404).json({ error: "Post not found" });
+//       }
+
+//       post.title = req.body.title || post.title;
+//       post.details = req.body.details || post.details;
+//       post.category = req.body.category || post.category;
+      
+//       await post.save();
+//       res.json({ message: "Post updated successfully!" });
+//   } catch (err) {
+//       console.error("Update Error:", err);
+//       res.status(500).json({ error: "Failed to update post" });
+//   }
+// };
+
+const updatePost = async (req, res) => {
+  // console.log("Update Request Received for ID:", req.params.id);
+  // console.log("Request Body:", req.body);
+  // console.log("Uploaded Files:", req.files); // ✅ Check karo kya images upload hui hain
+
   try {
       const post = await News.findById(req.params.id);
       if (!post) {
           return res.status(404).json({ error: "Post not found" });
       }
 
+      // ✅ Naye data ko set karo
       post.title = req.body.title || post.title;
       post.details = req.body.details || post.details;
       post.category = req.body.category || post.category;
-      
+
+      // ✅ Agar naye images hain to update karo
+      if (req.files && req.files.length > 0) {
+          const imageUrls = req.files.map(file => file.path); // ✅ Cloudinary URL le lo
+          post.images = imageUrls; // ✅ Images update karo
+      }
+
       await post.save();
-      res.json({ message: "Post updated successfully!" });
+      res.json({ message: "Post updated successfully!", data: post });
+
   } catch (err) {
       console.error("Update Error:", err);
       res.status(500).json({ error: "Failed to update post" });
   }
 };
+// 🟢 Single Post Fetch Karne Ka Controller
+const getSinglePost = async (req, res) => {
+  try {
+    // console.log("Fetching Post with ID:", req.params.id);
 
-module.exports = { getPosts, deletePost, updatePost, uploadNews };
+    const post = await News.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    // console.error("Error fetching post:", error);
+    res.status(500).json({ error: "Failed to fetch post" });
+  }
+};
+
+module.exports = { getPosts, deletePost, updatePost, uploadNews, getSinglePost };
 
