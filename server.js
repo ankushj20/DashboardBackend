@@ -14,6 +14,7 @@ const app = express();
 
 app.use(cors({
   origin: ["https://dfrontend-7gtw.onrender.com"], 
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 // app.use(cors({
