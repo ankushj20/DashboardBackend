@@ -97,35 +97,37 @@ const deletePost = async (req, res) => {
 // };
 
 const updatePost = async (req, res) => {
-  // console.log("Update Request Received for ID:", req.params.id);
-  // console.log("Request Body:", req.body);
-  // console.log("Uploaded Files:", req.files); // ✅ Check karo kya images upload hui hain
-
   try {
-      const post = await News.findById(req.params.id);
-      if (!post) {
-          return res.status(404).json({ error: "Post not found" });
-      }
+    // console.log("Received Body:", req.body);
+    // console.log("Received Files:", req.files);
 
-      // ✅ Naye data ko set karo
-      post.title = req.body.title || post.title;
-      post.details = req.body.details || post.details;
-      post.category = req.body.category || post.category;
+    const { title, category, details } = req.body;
+    let images = req.body.existingImages || []; // ✅ Purani images ko preserve karo
 
-      // ✅ Agar naye images hain to update karo
-      if (req.files && req.files.length > 0) {
-          const imageUrls = req.files.map(file => file.path); // ✅ Cloudinary URL le lo
-          post.images = imageUrls; // ✅ Images update karo
-      }
+    // ✅ Agar naye images aaye hain to unko bhi add karo
+    if (req.files) {
+      const newImages = req.files.map((file) => file.path);
+      images = [...images, ...newImages]; // ✅ Combine old & new images
+    }
 
-      await post.save();
-      res.json({ message: "Post updated successfully!", data: post });
+    // ✅ Database me update karo
+    const updatedPost = await News.findByIdAndUpdate(
+      req.params.id,
+      { title, category, details, images },
+      { new: true }
+    );
 
-  } catch (err) {
-      console.error("Update Error:", err);
-      res.status(500).json({ error: "Failed to update post" });
+    if (!updatedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.status(200).json({ message: "Post updated successfully", updatedPost });
+  } catch (error) {
+    console.error("Update Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 // 🟢 Single Post Fetch Karne Ka Controller
 const getSinglePost = async (req, res) => {
   try {

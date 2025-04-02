@@ -8,7 +8,8 @@ router.post("/upload", upload.array("images", 5), uploadNews);
 
 router.get("/posts", getPosts);
 router.delete("/posts/:id", deletePost);
-router.put("/posts/:id", updatePost);
+// router.put("/posts/:id", updatePost);
 router.get("/posts/:id", getSinglePost);
+router.put("/posts/:id", upload.array("images", 5), updatePost);
 
 module.exports = router;
